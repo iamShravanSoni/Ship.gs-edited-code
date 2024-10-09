@@ -19,8 +19,9 @@ import {
   Td,
   Select,
 } from "@chakra-ui/react";
-import { CircleDollarSign, ShoppingBag } from "lucide-react";
+import { CircleDollarSign, ShoppingBag, UserPen } from "lucide-react";
 import { useTable, useSortBy, usePagination } from "react-table";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
   const data = React.useMemo(
@@ -106,6 +107,12 @@ function Dashboard() {
   const [searchInput, setSearchInput] = useState("");
   const [sortOrder, setSortOrder] = useState("asc"); // Default sort order
 
+  const navigate = useNavigate();
+
+  const EditProfile = () => {
+    navigate("/EditProfile");
+  };
+
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearchInput(value);
@@ -119,148 +126,160 @@ function Dashboard() {
   };
 
   return (
-    <div className="px-8 py-10">
-      <div className="flex">
+    <div className=" pb-10">
+      <div className="flex px-4 pt-8 pb-10 rounded-b-lg items-center justify-between bg-blue-400 h-full">
         <h2 className="text-heading2-bold">Dashboard</h2>
+        <div onClick={EditProfile} className="flex gap-2 cursor-pointer items-center text-body-medium">
+          <UserPen />
+          <p>Tester</p>
+        </div>
       </div>
-      <Divider className="bg-grey-200 my-5" />
+      <Divider className="bg-grey-200 mb-7 mt-5" />
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-10">
-        <Card>
-          <CardHeader className="flex flex-row justify-between items-center">
-            <Heading size="md">Total Revenue</Heading>
-            <CircleDollarSign className="max-sm:hidden" />
-          </CardHeader>
-          <CardBody>
-            <Text className="text-body-bold" fontSize="4xl">
-              $0
-            </Text>
-          </CardBody>
-        </Card>
+      <div className="px-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-10">
+          <Card>
+            <CardHeader className="flex flex-row justify-between items-center">
+              <Heading size="md">Total Revenue</Heading>
+              <CircleDollarSign className="max-sm:hidden" />
+            </CardHeader>
+            <CardBody>
+              <Text className="text-body-bold" fontSize="4xl">
+                $0
+              </Text>
+            </CardBody>
+          </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row justify-between items-center">
-            <Heading size="md">Total Orders</Heading>
-            <ShoppingBag className="max-sm:hidden" />
-          </CardHeader>
-          <CardBody>
-            <Text className="text-body-bold" fontSize="4xl">
-              0
-            </Text>
-          </CardBody>
-        </Card>
-      </div>
+          <Card>
+            <CardHeader className="flex flex-row justify-between items-center">
+              <Heading size="md">Total Orders</Heading>
+              <ShoppingBag className="max-sm:hidden" />
+            </CardHeader>
+            <CardBody>
+              <Text className="text-body-bold" fontSize="4xl">
+                0
+              </Text>
+            </CardBody>
+          </Card>
+        </div>
 
-      {/* Divider between Dashboard and Data Table */}
-      <Divider className="bg-grey-200 mt-10" />
+        {/* Divider between Dashboard and Data Table */}
+        <Divider className="bg-grey-200 mt-10" />
 
-      <p className="text-heading2-bold py-10 text-sm">Order History</p>
-      {/* Data Table Section */}
-      <VStack spacing={4} align="stretch">
-        <HStack spacing={2}>
-          <Input
-            placeholder="Search by name"
-            value={searchInput}
-            onChange={handleSearch}
-            width="300px"
-          />
-          <Button onClick={() => setSearchInput("")}>Clear</Button>
-        </HStack>
+        <p className="text-heading2-bold py-10 text-sm">Order History</p>
+        {/* Data Table Section */}
+        <VStack spacing={4} align="stretch">
+          <div className="flex items-center justify-between">
+            <HStack spacing={2}>
+              <Input
+                placeholder="Search by name"
+                value={searchInput}
+                onChange={handleSearch}
+                width="300px"
+              />
+              <Button onClick={() => setSearchInput("")}>Clear</Button>
+            </HStack>
 
-        {/* Sort Order Selection */}
-        <HStack spacing={2}>
-          <Text>Sort by Date:</Text>
-          <Select value={sortOrder} onChange={handleSortChange} width="190px">
-            <option value="asc">Ascending</option>
-            <option value="desc">Descending</option>
-          </Select>
-        </HStack>
+            {/* Sort Order Selection */}
+            <HStack spacing={2}>
+              <Text>Sort by Date:</Text>
+              <Select
+                value={sortOrder}
+                onChange={handleSortChange}
+                width="190px"
+              >
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+              </Select>
+            </HStack>
+          </div>
 
-        <Table {...getTableProps()} variant="simple">
-          <Thead>
-            {headerGroups.map((headerGroup) => (
-              <Tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
-                {headerGroup.headers.map((column) => (
-                  <Th
-                    {...column.getHeaderProps(column.getSortByToggleProps())}
-                    key={column.id}
-                  >
-                    {column.render("Header")}
-                    <span>
-                      {column.isSorted
-                        ? column.isSortedDesc
-                          ? " 🔽"
-                          : " 🔼"
-                        : ""}
-                    </span>
-                  </Th>
-                ))}
-              </Tr>
-            ))}
-          </Thead>
-          <Tbody {...getTableBodyProps()}>
-            {page.map((row) => {
-              prepareRow(row);
-              return (
-                <Tr {...row.getRowProps()} key={row.id}>
-                  {row.cells.map((cell) => (
-                    <Td {...cell.getCellProps()} key={cell.column.id}>
-                      {cell.render("Cell")}
-                    </Td>
+          <Table {...getTableProps()} variant="simple">
+            <Thead>
+              {headerGroups.map((headerGroup) => (
+                <Tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
+                  {headerGroup.headers.map((column) => (
+                    <Th
+                      {...column.getHeaderProps(column.getSortByToggleProps())}
+                      key={column.id}
+                    >
+                      {column.render("Header")}
+                      <span>
+                        {column.isSorted
+                          ? column.isSortedDesc
+                            ? " 🔽"
+                            : " 🔼"
+                          : ""}
+                      </span>
+                    </Th>
                   ))}
                 </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
+              ))}
+            </Thead>
+            <Tbody {...getTableBodyProps()}>
+              {page.map((row) => {
+                prepareRow(row);
+                return (
+                  <Tr {...row.getRowProps()} key={row.id}>
+                    {row.cells.map((cell) => (
+                      <Td {...cell.getCellProps()} key={cell.column.id}>
+                        {cell.render("Cell")}
+                      </Td>
+                    ))}
+                  </Tr>
+                );
+              })}
+            </Tbody>
+          </Table>
 
-        {/* Pagination Controls */}
-        <HStack spacing={4}>
-          <Button onClick={() => gotoPage(0)} isDisabled={!canPreviousPage}>
-            {"<<"}
-          </Button>
-          <Button
-            onClick={() => gotoPage(pageIndex - 1)}
-            isDisabled={!canPreviousPage}
-          >
-            {"<"}
-          </Button>
-          <Text>
-            Page{" "}
-            <strong>
-              {pageIndex + 1} of {pageOptions.length}
-            </strong>
-          </Text>
-          <Button
-            onClick={() => gotoPage(pageIndex + 1)}
-            isDisabled={!canNextPage}
-          >
-            {">"}
-          </Button>
-          <Button
-            onClick={() => gotoPage(pageOptions.length - 1)}
-            isDisabled={!canNextPage}
-          >
-            {">>"}
-          </Button>
-        </HStack>
+          {/* Pagination Controls */}
+          <HStack spacing={4}>
+            <Button onClick={() => gotoPage(0)} isDisabled={!canPreviousPage}>
+              {"<<"}
+            </Button>
+            <Button
+              onClick={() => gotoPage(pageIndex - 1)}
+              isDisabled={!canPreviousPage}
+            >
+              {"<"}
+            </Button>
+            <Text>
+              Page{" "}
+              <strong>
+                {pageIndex + 1} of {pageOptions.length}
+              </strong>
+            </Text>
+            <Button
+              onClick={() => gotoPage(pageIndex + 1)}
+              isDisabled={!canNextPage}
+            >
+              {">"}
+            </Button>
+            <Button
+              onClick={() => gotoPage(pageOptions.length - 1)}
+              isDisabled={!canNextPage}
+            >
+              {">>"}
+            </Button>
+          </HStack>
 
-        <HStack spacing={2}>
-          <Text>Rows per page:</Text>
-          <Input
-            type="number"
-            value={pageSize || ""} // Default to empty string if pageSize is 0
-            onChange={(e) => {
-              const value = e.target.value;
-              // Only set the page size if the input is a valid number
-              if (value === "" || Number(value) > 0) {
-                setPageSize(value === "" ? 10 : Number(value)); // Default to 10 rows if empty
-              }
-            }}
-            width="60px"
-          />
-        </HStack>
-      </VStack>
+          <HStack spacing={2}>
+            <Text>Rows per page:</Text>
+            <Input
+              type="number"
+              value={pageSize || ""} // Default to empty string if pageSize is 0
+              onChange={(e) => {
+                const value = e.target.value;
+                // Only set the page size if the input is a valid number
+                if (value === "" || Number(value) > 0) {
+                  setPageSize(value === "" ? 10 : Number(value)); // Default to 10 rows if empty
+                }
+              }}
+              width="60px"
+            />
+          </HStack>
+        </VStack>
+      </div>
     </div>
   );
 }
